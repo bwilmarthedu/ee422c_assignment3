@@ -36,11 +36,17 @@ public class Main {
         // TODO methods to read in words, output ladder
 
         ArrayList<String> input = new ArrayList<String>();
+        ArrayList<String> ladderBFS = new ArrayList<String>();
+        ArrayList<String> ladderDFS = new ArrayList<String>();
+
         input.add("a");
         while(!input.get(0).equals("\\quit")) {
             input = parse(kb);
-            System.out.println(input);
-
+            //System.out.println(input);
+            ladderBFS = getWordLadderBFS(input.get(1), input.get(2));
+            printLadder(ladderBFS);
+            ladderDFS = getWordLadderDFS(input.get(1), input.get(2));
+            printLadder(ladderDFS);
 
             input.add("a");
         }
@@ -79,19 +85,54 @@ public class Main {
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
 
-        // TODO some code
-        Set<String> dict = makeDictionary();
-        // TODO more code
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> dict = new ArrayList<String>();
+
+        result.add(start);
+        dict.addAll(makeDictionary());
+
+
 
         return null; // replace this line later with real return
     }
 
 
     public static void printLadder(ArrayList<String> ladder) {
-
+        System.out.println("A " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size()-1) + ".");
+        for(int i = 0; i < ladder.size(); i++){
+            System.out.println(ladder.get(i));
+        }
     }
     // TODO
     // Other private static methods here
+
+    public void makeGraph(ArrayList<String> dict, Graph g){
+        Graph g = new Graph();
+        boolean diffByOne = 0;
+        for(int i = 0; i < dict.size(); i++){
+            g.addVertex(dict.get(i));
+        }
+        for(int i = 0; i < dict.size(); i++){
+            for(int j = 0; j < dict.size(); j++){
+                dict.get(i)
+            }
+        }
+    }
+
+    public boolean isDifferentByOne(String s1, String s2){
+        int differences = 0;
+        for(int i = 0; i < s1.length(); i++){
+            if(s1.charAt(i) == s2.charAt(i)){
+                differences++;
+            }
+        }
+        if(differences == 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 
     /* Do not modify makeDictionary */
