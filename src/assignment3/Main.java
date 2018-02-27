@@ -11,6 +11,7 @@
 
 
 package assignment3;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 
@@ -42,11 +43,11 @@ public class Main {
         input.add("a");
         while(!input.get(0).equals("\\quit")) {
             input = parse(kb);
-            //System.out.println(input);
-            ladderBFS = getWordLadderBFS(input.get(1), input.get(2));
+            System.out.println(input);
+            ladderBFS = getWordLadderBFS(input.get(0), input.get(1));
             printLadder(ladderBFS);
-            ladderDFS = getWordLadderDFS(input.get(1), input.get(2));
-            printLadder(ladderDFS);
+            //ladderDFS = getWordLadderDFS(input.get(0), input.get(1));
+            //printLadder(ladderDFS);
 
             input.add("a");
         }
@@ -67,6 +68,7 @@ public class Main {
         // TO DO
 
         String input = keyboard.nextLine();
+        input = input.toUpperCase();
         String[] tokens = input.split("\\s+");
 
         return new ArrayList<String>(Arrays.asList(tokens));
@@ -87,18 +89,17 @@ public class Main {
 
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> dict = new ArrayList<String>();
-
-        result.add(start);
+        Graph g = new Graph();
         dict.addAll(makeDictionary());
+        g = makeGraph(dict);
 
 
-
-        return null; // replace this line later with real return
+        return bfs(start, end, g); // replace this line later with real return
     }
 
 
     public static void printLadder(ArrayList<String> ladder) {
-        System.out.println("A " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size()-1) + ".");
+        System.out.println("a " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size()-1) + ".");
         for(int i = 0; i < ladder.size(); i++){
             System.out.println(ladder.get(i));
         }
@@ -106,23 +107,25 @@ public class Main {
     // TODO
     // Other private static methods here
 
-    public void makeGraph(ArrayList<String> dict, Graph g){
+    private static Graph makeGraph(ArrayList<String> dict){
         Graph g = new Graph();
-        boolean diffByOne = 0;
         for(int i = 0; i < dict.size(); i++){
             g.addVertex(dict.get(i));
         }
         for(int i = 0; i < dict.size(); i++){
             for(int j = 0; j < dict.size(); j++){
-                dict.get(i)
+                if(isDifferentByOne(dict.get(i), dict.get(j))){
+                    g.addEdge(g.getVertex(i), g.getVertex(j));
+                }
             }
         }
+        return g;
     }
 
-    public boolean isDifferentByOne(String s1, String s2){
+    private static boolean isDifferentByOne(String s1, String s2){
         int differences = 0;
         for(int i = 0; i < s1.length(); i++){
-            if(s1.charAt(i) == s2.charAt(i)){
+            if(s1.charAt(i) != s2.charAt(i)){
                 differences++;
             }
         }
@@ -132,6 +135,49 @@ public class Main {
         else{
             return false;
         }
+    }
+
+    private static ArrayList<String> bfs(String start, String end, Graph g){
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<Vertex> queue = new ArrayList<Vertex>();
+        ArrayList<Vertex> adjacencyList = new ArrayList<Vertex>();
+        boolean foundFlag = false;
+
+        Vertex v = g.getVertex(start);
+        Vertex head = new Vertex();
+        queue.add(v);
+        v.setVisited(true);
+        v.setPrevious(head);
+
+        while(!queue.isEmpty() && foundFlag == false){
+            v = queue.remove(0);
+            adjacencyList = g.getAdjacencyList(v);
+            for(int i = 1; i < adjacencyList.size(); i++){
+                Vertex neighbor = adjacencyList.get(i);
+                if(!neighbor.isVisited()) {
+                    if (neighbor.getLabel().compareTo(end) == 0) {
+                        foundFlag = true;
+                    }
+                    neighbor.setPrevious(v);
+                    neighbor.setVisited(true);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        if(foundFlag == true){
+            Vertex previous = g.getVertex(end).getPrevious();
+            result.add(0, end);
+            while(!(previous.getPrevious() == head)){
+                result.add(0, previous.getLabel());
+                previous = previous.getPrevious();
+            }
+            result.add(0, start);
+        }
+        else{
+            return null;
+        }
+        return result;
     }
 
 
