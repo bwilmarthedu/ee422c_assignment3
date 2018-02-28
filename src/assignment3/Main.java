@@ -44,10 +44,10 @@ public class Main {
         while(!input.get(0).equals("\\quit")) {
             input = parse(kb);
             System.out.println(input);
-            ladderBFS = getWordLadderBFS(input.get(0), input.get(1));
-            printLadder(ladderBFS);
-            //ladderDFS = getWordLadderDFS(input.get(0), input.get(1));
-            //printLadder(ladderDFS);
+            //ladderBFS = getWordLadderBFS(input.get(0), input.get(1));
+            //printLadder(ladderBFS);
+            ladderDFS = getWordLadderDFS(input.get(0), input.get(1));
+            printLadder(ladderDFS);
 
             input.add("a");
         }
@@ -76,13 +76,12 @@ public class Main {
 
     public static ArrayList<String> getWordLadderDFS(String start, String end) {
 
-        // Returned list should be ordered start to end.  Include start and end.
-        // If ladder is empty, return list with just start and end.
-        // TODO some code
-        Set<String> dict = makeDictionary();
-        // TODO more code
-
-        return null; // replace this line later with real return
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> dict = new ArrayList<String>();
+        Graph g = new Graph();
+        dict.addAll(makeDictionary());
+        g = makeGraph(dict);
+        return dfs(start, end, g);
     }
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
@@ -92,8 +91,6 @@ public class Main {
         Graph g = new Graph();
         dict.addAll(makeDictionary());
         g = makeGraph(dict);
-
-
         return bfs(start, end, g); // replace this line later with real return
     }
 
@@ -165,7 +162,7 @@ public class Main {
             }
         }
 
-        if(foundFlag == true){
+        if(foundFlag){
             Vertex previous = g.getVertex(end).getPrevious();
             result.add(0, end);
             while(!(previous.getPrevious() == head)){
@@ -175,9 +172,59 @@ public class Main {
             result.add(0, start);
         }
         else{
-            return null;
+            result.add(start);
+            result.add(end);
+            // TODO Need to verify this works
         }
         return result;
+    }
+
+    private static ArrayList<String> dfs(String start, String end, Graph g){
+        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<Vertex> adjacencyList = new ArrayList<Vertex>();
+        boolean ladderFound = false;
+
+        Vertex v = g.getVertex(start);
+        Vertex head = new Vertex();
+        v.setVisited(true);
+        v.setPrevious(head);
+        ladderFound = dfsVertex(g, v, end);
+
+        if(ladderFound){
+            Vertex previous = g.getVertex(end).getPrevious();
+            result.add(0, end);
+            while(!(previous.getPrevious() == head)){
+                result.add(0, previous.getLabel());
+                previous = previous.getPrevious();
+            }
+            result.add(0, start);
+        }
+        else{
+            result.add(start);
+            result.add(end);
+            // TODO Need to verify this works
+        }
+        return result;
+
+    }
+
+    private static boolean dfsVertex(Graph g, Vertex v, String end){
+        ArrayList<Vertex> adjacencyList = g.getAdjacencyList(v);
+        for(int i = 1; i < adjacencyList.size(); i++){
+            Vertex neighbor = adjacencyList.get(i);
+            if(!neighbor.isVisited()) {
+                neighbor.setPrevious(v);
+                neighbor.setVisited(true);
+                if (neighbor.getLabel().compareTo(end) == 0) {
+                    return true;
+                }
+                if(dfsVertex(g, adjacencyList.get(i), end)){
+                    return true;
+                }
+            }
+
+        }
+        return false;
     }
 
 
