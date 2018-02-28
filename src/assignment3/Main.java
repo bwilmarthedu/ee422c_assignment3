@@ -4,8 +4,8 @@
  * Brian Wilmarth
  * bw24274
  * 15455
- * Slip days used: <0>
- * Git URL:
+ * Slip days used: n/a
+ * Git URL: https://github.com/bwilmarthedu/ee422c_assignment3.git
  * Spring 2018
  */
 
@@ -53,13 +53,15 @@ public class Main {
         }
     }
 
+    /**
+     * Static variables and constants should be initialized here.
+     */
     public static void initialize() {
-        // initialize your static variables or constants here.
-        // We will call this method before running our JUNIT tests.  So call it
-        // only once at the start of main.
+
     }
 
     /**
+     * Parses the scanner input for the start and end word, or the /quit command
      * @param keyboard Scanner connected to System.in
      * @return ArrayList of Strings containing start word and end word.
      * If command is /quit, return empty ArrayList.
@@ -71,6 +73,12 @@ public class Main {
         return new ArrayList<String>(Arrays.asList(tokens));
     }
 
+    /**
+     * This function uses a depth first search algorithm to generate a word ladder from the start word to the end word
+     * @param start the desired start of the word ladder
+     * @param end the desired end of the word ladder
+     * @return returns the an ArrayList containing the word ladder. If no word ladder is found, it just contains the start and end words.
+     */
     public static ArrayList<String> getWordLadderDFS(String start, String end) {
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> dict = new ArrayList<String>();
@@ -80,6 +88,12 @@ public class Main {
         return dfs(start.toUpperCase(), end.toUpperCase(), g);
     }
 
+    /**
+     * This function uses a breadth first search algorithm to generate a word ladder from the start word to the end word. BFS guarantees the shortest possible word ladder.
+     * @param start the desired start of the word ladder
+     * @param end the desired end of the word ladder
+     * @return returns an ArrayList containing the word ladder. If no word ladder is found, it just contains the start and end words.
+     */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> dict = new ArrayList<String>();
@@ -89,6 +103,10 @@ public class Main {
         return bfs(start.toUpperCase(), end.toUpperCase(), g); // replace this line later with real return
     }
 
+    /**
+     * Generates the output for a given word ladder
+     * @param ladder the sequence of words to be printed
+     */
     public static void printLadder(ArrayList<String> ladder) {
         for(int i = 0; i < ladder.size(); i ++){
             ladder.set(i, ladder.get(i).toLowerCase());
@@ -106,6 +124,11 @@ public class Main {
 
     // Other private static methods here
 
+    /**
+     * Generates a similarity graph given a dictionary of words. Two words are similar if they differ by only one character.
+     * @param dict an ArrayList of Strings
+     * @return returns a Graph object
+     */
     private static Graph makeGraph(ArrayList<String> dict){
         Graph g = new Graph();
         for(int i = 0; i < dict.size(); i++){
@@ -121,6 +144,12 @@ public class Main {
         return g;
     }
 
+    /**
+     * Checks if Strings s1 and s2 are different by only one character. Strings MUST be the same length.
+     * @param s1 The first String to be compared
+     * @param s2 The second String to be compared
+     * @return true if different by only one character false otherwise
+     */
     private static boolean isDifferentByOne(String s1, String s2){
         int differences = 0;
         for(int i = 0; i < s1.length(); i++){
@@ -136,6 +165,13 @@ public class Main {
         }
     }
 
+    /**
+     * bfs algorithm
+     * @param start String, desired start of the word ladder
+     * @param end String, desired end point of the word ladder
+     * @param g the Graph to be searched
+     * @return returns an ArrayList containing the word ladder. If no word ladder is found, it just contains the start and end words.
+     */
     private static ArrayList<String> bfs(String start, String end, Graph g){
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<Vertex> queue = new ArrayList<Vertex>();
@@ -180,6 +216,13 @@ public class Main {
         return result;
     }
 
+    /**
+     * dfs algorithm
+     * @param start String, desired start of the word ladder
+     * @param end String, desired end point of the word ladder
+     * @param g the Graph to be searched
+     * @return returns an ArrayList containing the word ladder. If no word ladder is found, it just contains the start and end words.
+     */
     private static ArrayList<String> dfs(String start, String end, Graph g){
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<Vertex> adjacencyList = new ArrayList<Vertex>();
@@ -208,6 +251,13 @@ public class Main {
 
     }
 
+    /**
+     * The actual recursive portion of the dfs algorithm.
+     * @param g the Graph to be searched
+     * @param v the Vertex to run dfs from
+     * @param end the desired end point of the word ladder. i.e. the stop condition for dfs
+     * @return true if end has been reached, false otherwise
+     */
     private static boolean dfsVertex(Graph g, Vertex v, String end){
         ArrayList<Vertex> adjacencyList = g.getAdjacencyList(v);
         for(int i = 1; i < adjacencyList.size(); i++){
@@ -227,6 +277,11 @@ public class Main {
     }
 
     /* Do not modify makeDictionary */
+
+    /**
+     * Constructs a dictionary from a text file
+     * @return a set of Strings containing words from a text file
+     */
     public static Set<String>  makeDictionary () {
         Set<String> words = new HashSet<String>();
         Scanner infile = null;
