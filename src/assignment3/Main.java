@@ -27,7 +27,7 @@ public class Main {
         if (args.length != 0) {
             kb = new Scanner(new File(args[0]));
             ps = new PrintStream(new File(args[1]));
-            //System.setOut(ps);			// redirect output to ps
+            System.setOut(ps);			// redirect output to ps
         } else {
             kb = new Scanner(System.in);// default input from Stdin
             ps = System.out;			// default output to Stdout
@@ -44,8 +44,8 @@ public class Main {
         while(!input.get(0).equals("\\quit")) {
             input = parse(kb);
             System.out.println(input);
-            //ladderBFS = getWordLadderBFS(input.get(0), input.get(1));
-            //printLadder(ladderBFS);
+            ladderBFS = getWordLadderBFS(input.get(0), input.get(1));
+            printLadder(ladderBFS);
             ladderDFS = getWordLadderDFS(input.get(0), input.get(1));
             printLadder(ladderDFS);
 
@@ -65,43 +65,45 @@ public class Main {
      * If command is /quit, return empty ArrayList.
      */
     public static ArrayList<String> parse(Scanner keyboard) {
-        // TO DO
-
         String input = keyboard.nextLine();
         input = input.toUpperCase();
         String[] tokens = input.split("\\s+");
-
         return new ArrayList<String>(Arrays.asList(tokens));
     }
 
     public static ArrayList<String> getWordLadderDFS(String start, String end) {
-
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> dict = new ArrayList<String>();
         Graph g = new Graph();
         dict.addAll(makeDictionary());
         g = makeGraph(dict);
-        return dfs(start, end, g);
+        return dfs(start.toUpperCase(), end.toUpperCase(), g);
     }
 
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-
         ArrayList<String> result = new ArrayList<String>();
         ArrayList<String> dict = new ArrayList<String>();
         Graph g = new Graph();
         dict.addAll(makeDictionary());
         g = makeGraph(dict);
-        return bfs(start, end, g); // replace this line later with real return
+        return bfs(start.toUpperCase(), end.toUpperCase(), g); // replace this line later with real return
     }
-
 
     public static void printLadder(ArrayList<String> ladder) {
-        System.out.println("a " + (ladder.size()-2) + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size()-1) + ".");
-        for(int i = 0; i < ladder.size(); i++){
-            System.out.println(ladder.get(i));
+        for(int i = 0; i < ladder.size(); i ++){
+            ladder.set(i, ladder.get(i).toLowerCase());
+        }
+        if(ladder.size() == 2){
+            System.out.println("no word ladder can be found between " + ladder.get(0) + " and " + ladder.get(1) + ".");
+        }
+        else {
+            System.out.println("a " + (ladder.size() - 2) + "-rung word ladder exists between " + ladder.get(0) + " and " + ladder.get(ladder.size() - 1) + ".");
+            for (int i = 0; i < ladder.size(); i++) {
+                System.out.println(ladder.get(i));
+            }
         }
     }
-    // TODO
+
     // Other private static methods here
 
     private static Graph makeGraph(ArrayList<String> dict){
@@ -174,7 +176,6 @@ public class Main {
         else{
             result.add(start);
             result.add(end);
-            // TODO Need to verify this works
         }
         return result;
     }
@@ -202,7 +203,6 @@ public class Main {
         else{
             result.add(start);
             result.add(end);
-            // TODO Need to verify this works
         }
         return result;
 
@@ -222,11 +222,9 @@ public class Main {
                     return true;
                 }
             }
-
         }
         return false;
     }
-
 
     /* Do not modify makeDictionary */
     public static Set<String>  makeDictionary () {
